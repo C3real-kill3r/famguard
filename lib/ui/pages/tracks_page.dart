@@ -3,7 +3,12 @@ import 'package:famguard/ui/components/track_card.dart';
 import 'package:flutter/material.dart';
 
 class TracksPage extends StatelessWidget {
-  List<String> members = ['Emily', 'Paula'];
+  List<String> members = [
+    'John Doe',
+    'Jane Doe',
+    'Mary Jane',
+    'Melkatilili Mek'
+  ];
 
   @override
   Widget build(BuildContext context) {

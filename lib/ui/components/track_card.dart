@@ -2,7 +2,7 @@ import 'package:famguard/data/values.dart';
 import 'package:famguard/ui/components/circular_image.dart';
 import 'package:flutter/material.dart';
 
-class TrackCard extends StatelessWidget{
+class TrackCard extends StatelessWidget {
   final String member;
 
   TrackCard(this.member);
@@ -22,29 +22,29 @@ class TrackCard extends StatelessWidget{
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: CircularImage(NetworkImage('https://celebritypets.net/wp-content/uploads/2016/12/Adriana-Lima.jpg')),
+                    child: CircularImage(NetworkImage(
+                        'https://i.pinimg.com/originals/6b/aa/98/6baa98cc1c3f4d76e989701746e322dd.png')),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(member,),
-                      Text('0.8 KM for your position',
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: colorGradientTop
-                        ),
+                      Text(
+                        member,
+                      ),
+                      Text(
+                        '0.8 KM for your position',
+                        style: TextStyle(fontSize: 12, color: colorGradientTop),
                       )
                     ],
                   ),
                 ],
               ),
-
               Row(
                 children: <Widget>[
                   Switch(
                     value: true,
                     activeColor: colorGradientTop,
-                    onChanged: (currentValue){},
+                    onChanged: (currentValue) {},
                   ),
                   Text('Track')
                 ],

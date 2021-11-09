@@ -25,8 +25,9 @@ class _HomePageState extends State<HomePage> {
   void SendMessage() {
     getAddress();
     SmsSender sender = new SmsSender();
-    String address = "+254795749477";
-    SmsMessage message = new SmsMessage(address, 'Hello flutter!');
+    String address = "+254751007698";
+    SmsMessage message =
+        new SmsMessage(address, 'Hello, help me out, I am in danger!');
     print(address);
     message.onStateChanged.listen((state) {
       if (state == SmsMessageState.Sent) {
