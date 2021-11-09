@@ -13,8 +13,8 @@ A Flutter app for monitor members family.
 - [x] Panic UI
 - [x] Family Members UI
 - [x] Member track UI
-- [x] Send panic sms
+- [x] Send alert sms to family members when the panic button is clicked
 - [ ] Login with Google Sign in
 - [ ] Include/remove family members
-- [ ] Send alert to family members when the panic button is clicked
+- [ ] Show location of family members (Who have allowed location sharing)
 - [ ] More...
