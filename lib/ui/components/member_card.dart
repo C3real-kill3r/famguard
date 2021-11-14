@@ -14,12 +14,12 @@ class MemberCard extends StatelessWidget {
       child: Card(
         elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(2.0),
           child: Row(
             children: <Widget>[
               CircularImage(NetworkImage(imageUrl)),
               Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 15),
                 child: Text(memberName),
               ),
               Spacer(),
@@ -34,10 +34,15 @@ class MemberCard extends StatelessWidget {
                         color: Colors.red,
                         borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: Center(
-                        child: Icon(
-                      Icons.clear,
-                      color: Colors.white,
-                      size: 14,
+                        child: GestureDetector(
+                      onTap: () {
+                        print("I was clicked");
+                      },
+                      child: Icon(
+                        Icons.clear,
+                        color: Colors.white,
+                        size: 14,
+                      ),
                     )),
                   ),
                 ],

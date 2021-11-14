@@ -2,25 +2,19 @@ import 'package:famguard/ui/components/panic_button.dart';
 import 'package:flutter/material.dart';
 
 class PanicPage extends StatelessWidget {
-
   final baseRedColor = Colors.red[600];
 
-  Widget buildStopButton(){
+  Widget buildStopButton() {
     return Container(
       width: 110,
       height: 33,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(15)),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 1,
-            color: Colors.black26
-          )
-        ]
-      ),
+          boxShadow: [BoxShadow(blurRadius: 1, color: Colors.black26)]),
       child: Center(
-        child: Text('Stop'.toUpperCase(),
+        child: Text(
+          'Stop'.toUpperCase(),
           style: TextStyle(
             color: baseRedColor,
           ),
@@ -29,26 +23,24 @@ class PanicPage extends StatelessWidget {
     );
   }
 
-  Widget buildCircularContainer(String title, AssetImage _icon){
+  Widget buildCircularContainer(String title, AssetImage _icon) {
     return Column(
       children: <Widget>[
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(32)),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 5,
-                color: Colors.black26
-              )
-            ]
-          ),
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(32)),
+              boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black26)]),
           child: Center(
-            child: ImageIcon(_icon, color: baseRedColor,),
+            child: ImageIcon(
+              _icon,
+              color: baseRedColor,
+            ),
           ),
         ),
-        Text(title,
+        Text(
+          title,
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white),
         )
@@ -61,18 +53,21 @@ class PanicPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         GestureDetector(
-          child: buildCircularContainer('Health', AssetImage('images/ic_healt.png')),
+          child: buildCircularContainer(
+              'Health', AssetImage('images/ic_healt.png')),
           onTap: () => Navigator.of(context).pushNamed('/alert'),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: GestureDetector(
-            child: buildCircularContainer('Robbery', AssetImage('images/ic_robbery.png')),
+            child: buildCircularContainer(
+                'Robbery', AssetImage('images/ic_robbery.png')),
             onTap: () => Navigator.of(context).pushNamed('/alert'),
           ),
         ),
         GestureDetector(
-          child: buildCircularContainer('Disaster', AssetImage('images/ic_disaster.png')),
+          child: buildCircularContainer(
+              'Disaster', AssetImage('images/ic_disaster.png')),
           onTap: () => Navigator.of(context).pushNamed('/alert'),
         ),
       ],
@@ -96,9 +91,10 @@ class PanicPage extends StatelessWidget {
                 children: <Widget>[
                   Hero(
                     tag: 'panic',
-                    child: PanicButton(backgroundColor: Colors.white,),
+                    child: PanicButton(
+                      backgroundColor: Colors.white,
+                    ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: buildPanicOptions(context),
@@ -106,10 +102,11 @@ class PanicPage extends StatelessWidget {
                 ],
               ),
             ),
-
             Align(
               alignment: Alignment.bottomCenter,
-              child: buildStopButton(),
+              child: GestureDetector(
+                  onTap: () => Navigator.of(context).pushNamed('/home'),
+                  child: buildStopButton()),
             )
           ],
         ),
