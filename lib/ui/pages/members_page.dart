@@ -204,10 +204,15 @@ class _MembersPageState extends State<MembersPage> {
             TextButton(
               child: Text('Remove'),
               onPressed: () {
-                // remove member from list
-                members.remove(member);
+                // find index of member in members list
+                int index = members.indexOf(member);
+                // remove value from members list in index
+                members.removeAt(index);
+                membersNumbers.removeAt(index);
                 // update members list to sharedprefernce to key 'members'
                 setListData('members', members);
+                setListData('membersNumbers', membersNumbers);
+                setState(() {});
                 Navigator.of(context).pop();
               },
             ),
@@ -299,7 +304,9 @@ class _MembersPageState extends State<MembersPage> {
                     childAspectRatio: 2.5,
                     shrinkWrap: true,
                     children: members.map((name) {
-                      return MemberCard(name);
+                      return MemberCard(name, () {
+                        _removeMember(context, name);
+                      });
                     }).toList(),
                   ),
           ],

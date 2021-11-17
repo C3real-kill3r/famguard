@@ -5,8 +5,9 @@ class MemberCard extends StatelessWidget {
   final String imageUrl =
       "https://i.pinimg.com/originals/6b/aa/98/6baa98cc1c3f4d76e989701746e322dd.png";
   final String memberName;
+  Function onTap;
 
-  MemberCard(this.memberName);
+  MemberCard(this.memberName, this.onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +43,7 @@ class MemberCard extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: Center(
                         child: GestureDetector(
-                      onTap: () {
-                        print('I was tapped $memberName');
-                      },
+                      onTap: onTap,
                       child: Icon(
                         Icons.clear,
                         color: Colors.white,
