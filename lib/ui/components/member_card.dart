@@ -20,7 +20,14 @@ class MemberCard extends StatelessWidget {
               CircularImage(NetworkImage(imageUrl)),
               Padding(
                 padding: const EdgeInsets.only(left: 15),
-                child: Text(memberName),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width / 3.56,
+                  child: Text(
+                    memberName,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
               ),
               Spacer(),
               Column(

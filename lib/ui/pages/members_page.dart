@@ -40,6 +40,12 @@ class _MembersPageState extends State<MembersPage> {
     myPrefs.setStringList(key, value);
   }
 
+  // override onBackPressed
+  Future<bool> onBackPressed() {
+    Navigator.pushNamed(context, '/home');
+    return Future.value(false);
+  }
+
   @override
   initState() {
     super.initState();
@@ -52,19 +58,41 @@ class _MembersPageState extends State<MembersPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter phone number'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            side: BorderSide(color: Colors.blueGrey, width: 2.0),
+          ),
+          title: Text(
+            'Add Member',
+            textAlign: TextAlign.center,
+            // make heading style
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w300,
+              color: Colors.blueGrey,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Enter name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
                 ),
                 controller: name,
+              ),
+              SizedBox(
+                height: 5,
               ),
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Enter phone number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
                 ),
                 controller: phone,
                 keyboardType: TextInputType.number,
@@ -72,26 +100,87 @@ class _MembersPageState extends State<MembersPage> {
             ],
           ),
           actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Add'),
-              onPressed: () {
-                // add name as key and phone number as value in shared_preferences
-                // add name to list
-                members.add(name.text.toString());
-                membersNumbers.add(phone.text.toString());
-                // update members list to sharedprefernce to key 'members'
-                setListData('members', members);
-                setListData('membersNumbers', membersNumbers);
-                Navigator.of(context).pop();
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  child: Text(
+                    '   Add   ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    // check if name.text and phone.text are not empty
+                    if (name.text.isNotEmpty && phone.text.isNotEmpty) {
+                      if (phone.text.length == 10) {
+                        // add name as key and phone number as value in shared_preferences
+                        // add name to list
+                        members.add(name.text.toString());
+                        membersNumbers.add(phone.text.toString());
+                        // update members list to sharedprefernce to key 'members'
+                        setListData('members', members);
+                        setListData('membersNumbers', membersNumbers);
+                        Navigator.of(context).pop();
+                      } else {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Invalid phone number'),
+                              content: Text(
+                                'Please enter a valid phone number i.e 10 digits',
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('Ok'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _enterPhoneNumber(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: colorGradientTop,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
+          // add spaceBetween action buttons
         );
       },
     );
@@ -167,12 +256,40 @@ class _MembersPageState extends State<MembersPage> {
               height: MediaQuery.of(context).size.height / 3,
               width: double.maxFinite,
               color: colorGradientTop,
-              child: Container(
-                margin:
-                    EdgeInsets.only(top: 25, bottom: 20, left: 40, right: 40),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('images/qr_code.png'))),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 25, bottom: 20, left: 40, right: 40),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('images/qr_code.png'),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      width: double.maxFinite,
+                      color: colorGradientBottom,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Scan QR code to add members',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             (membersNumbers.isEmpty || membersNumbers == null)

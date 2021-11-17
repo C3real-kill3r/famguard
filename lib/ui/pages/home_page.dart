@@ -11,8 +11,8 @@ import 'package:sms/sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 
-// import 'package:contacts_service/contacts_service.dart';
 class HomePage extends StatefulWidget {
   @override
   State createState() => _HomePageState();
@@ -37,7 +37,37 @@ class _HomePageState extends State<HomePage> {
         membersNumbers = [];
       }
     });
-    // return [membersNumbers, members];
+  }
+
+  // check if location permission and sms permission are granted
+  Future<bool> checkPermission() async {
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.locationWhenInUse);
+    PermissionStatus smsPermission =
+        await PermissionHandler().checkPermissionStatus(PermissionGroup.sms);
+    if (permission == PermissionStatus.granted &&
+        smsPermission == PermissionStatus.granted) {
+      return true;
+    } else {
+      // request permissions
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler().requestPermissions(
+              [PermissionGroup.locationWhenInUse, PermissionGroup.sms]);
+      if (permissions[PermissionGroup.locationWhenInUse] ==
+              PermissionStatus.granted &&
+          permissions[PermissionGroup.sms] == PermissionStatus.granted) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  // funtion to refresh current page
+  Future<void> refresh() async {
+    await getListData("members");
+    await getListData("membersNumbers");
+    setState(() {});
   }
 
   Future<Position> _determinePosition() async {
@@ -116,6 +146,7 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
+  // emergency message sending
 
   // ignore: non_constant_identifier_names
   Future<void> SendMessage() async {
@@ -128,7 +159,7 @@ class _HomePageState extends State<HomePage> {
       for (int i = 0; i < membersNumbers.length; i++) {
         SmsSender sender = new SmsSender();
         String message =
-            "Hi ${members[i]}, This is a test. Please help me. My location is $loc. http://maps.google.com/?ie=UTF8&hq=&ll=$lat,$long&z=13";
+            "Hi ${members[i]}, This is a test. Please help me. My location is $loc. https://maps.google.com/?q=$lat,$long ";
         SmsMessage msg = new SmsMessage(membersNumbers[i], message);
         msg.onStateChanged.listen((state) {
           if (state == SmsMessageState.Sent) {
@@ -148,7 +179,9 @@ class _HomePageState extends State<HomePage> {
   Widget buildCustomAppBar() {
     List<Widget> _navigationWidgetList = [
       IconButton(
-        onPressed: () {},
+        onPressed: () {
+          featureComingSoon();
+        },
         icon: Icon(
           Icons.add_alert,
           color: Colors.white,
@@ -156,7 +189,48 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(32),
       ),
       IconButton(
-        onPressed: () {},
+        onPressed: () {
+          // toast request for donation and developed by Kimberly
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    "Donate",
+                  ),
+                  content: Text(
+                      "If you like this app and want to donate, please click the button below"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        "Donate",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // add donation link
+                      },
+                      // green backround, rounded sides
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.green[300],
+                        side: BorderSide.none,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    FlatButton(
+                      child: Text("Not Today"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        },
         icon: Hero(
             tag: 'app_icon',
             child: ImageIcon(
@@ -252,10 +326,10 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  //override initState()
   @override
   initState() {
     super.initState();
+    checkPermission();
     getListData('members');
     getListData('membersNumbers');
   }
@@ -311,6 +385,7 @@ class _HomePageState extends State<HomePage> {
                       child: PanicButton(),
                     ),
                     onTap: () async {
+                      await refresh();
                       print(membersNumbers);
                       print(members);
                       if (membersNumbers.length > 0) {
@@ -335,3 +410,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+void launch(String s) {}
