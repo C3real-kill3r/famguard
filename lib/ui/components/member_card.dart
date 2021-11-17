@@ -36,7 +36,7 @@ class MemberCard extends StatelessWidget {
                     child: Center(
                         child: GestureDetector(
                       onTap: () {
-                        print("I was clicked");
+                        print('I was tapped $memberName');
                       },
                       child: Icon(
                         Icons.clear,

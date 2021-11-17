@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^0.4.3
   # contacts_service: ^0.6.3
   sms: ^0.2.0
+  permission_handler: '^2.2.0'
   geolocator: ^7.7.1
   http:
 

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class TrackCard extends StatelessWidget {
   final String member;
+  final String number;
 
-  TrackCard(this.member);
+  TrackCard(this.member, this.number);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class TrackCard extends StatelessWidget {
                         member,
                       ),
                       Text(
-                        '0.8 KM for your position',
+                        number,
                         style: TextStyle(fontSize: 12, color: colorGradientTop),
                       )
                     ],

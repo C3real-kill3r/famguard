@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sms/sms.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 // import 'package:contacts_service/contacts_service.dart';
@@ -20,6 +21,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var name = "";
   var loc;
+  List<String> members = [];
+  List<String> membersNumbers = [];
+
+  Future<void> getListData(String key) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    var myMembers = myPrefs.getStringList(key);
+    setState(() {
+      if (key == "membersNumbers" && myMembers != null) {
+        membersNumbers = myMembers;
+      } else if (key == "members" && myMembers != null) {
+        members = myMembers;
+      } else {
+        members = [];
+        membersNumbers = [];
+      }
+    });
+    // return [membersNumbers, members];
+  }
+
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -77,6 +97,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // feature coming soon toast
+  void featureComingSoon() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Feature Coming Soon"),
+            content: Text("This feature is coming soon"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   // ignore: non_constant_identifier_names
   Future<void> SendMessage() async {
     final name = _determinePosition();
@@ -84,24 +124,22 @@ class _HomePageState extends State<HomePage> {
       var lat = value.latitude;
       var long = value.longitude;
       await getAddress(lat, long);
-      // Timer.periodic(Duration(seconds: 20), (timer) {
-      SmsSender sender = new SmsSender();
-      String address = "+254751007698";
-      SmsMessage message = new SmsMessage(
-        address,
-        'Hello, I need your help. Find me at $loc. http://maps.google.com/?ie=UTF8&hq=&ll=$lat,$long&z=13',
-      );
-      print(address);
-      message.onStateChanged.listen((state) {
-        if (state == SmsMessageState.Sent) {
-          print("SMS is sent!");
-        } else if (state == SmsMessageState.Delivered) {
-          print("SMS is delivered!");
-        }
-      });
-      sender.sendSms(message);
+      // loop through membersNumbers and send sms
+      for (int i = 0; i < membersNumbers.length; i++) {
+        SmsSender sender = new SmsSender();
+        String message =
+            "Hi ${members[i]}, This is a test. Please help me. My location is $loc. http://maps.google.com/?ie=UTF8&hq=&ll=$lat,$long&z=13";
+        SmsMessage msg = new SmsMessage(membersNumbers[i], message);
+        msg.onStateChanged.listen((state) {
+          if (state == SmsMessageState.Sent) {
+            print("SMS is sent!");
+          } else if (state == SmsMessageState.Delivered) {
+            print("SMS is delivered!");
+          }
+        });
+        sender.sendSms(msg);
+      }
     });
-    // });
   }
 
   String imageUrl =
@@ -187,9 +225,39 @@ class _HomePageState extends State<HomePage> {
         OptionCard('Members', Icons.people, () {
           Navigator.of(context).pushNamed('/members');
         }),
-        OptionCard('Chats', Icons.question_answer, () {}),
+        OptionCard('Chats', Icons.question_answer, () {
+          featureComingSoon();
+        }),
       ],
     );
+  }
+
+  // alert user that there are no members
+  void noMembers() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("No Members"),
+            content: Text("There are no members in your group"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  //override initState()
+  @override
+  initState() {
+    super.initState();
+    getListData('members');
+    getListData('membersNumbers');
   }
 
   @override
@@ -242,9 +310,15 @@ class _HomePageState extends State<HomePage> {
                       tag: "panic",
                       child: PanicButton(),
                     ),
-                    onTap: () {
-                      SendMessage();
-                      Navigator.of(context).pushNamed('/panic');
+                    onTap: () async {
+                      print(membersNumbers);
+                      print(members);
+                      if (membersNumbers.length > 0) {
+                        await SendMessage();
+                        Navigator.of(context).pushNamed('/panic');
+                      } else {
+                        noMembers();
+                      }
                     },
                   ),
                   SizedBox(height: 20),
